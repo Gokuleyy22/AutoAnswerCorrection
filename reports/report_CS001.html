@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report - Amrose Khan (CS001)</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 30px; background: #f5f5f5; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #2980b9; margin-top: 30px; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .info-item { padding: 8px 12px; background: #ecf0f1; border-radius: 5px; }
+        .info-label { font-weight: bold; color: #555; }
+        .summary-box { background: #e8f6ff; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center; }
+        .grade { font-size: 48px; font-weight: bold; color: #27ae60; }
+        .percentage { font-size: 24px; color: #2c3e50; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th { background: #3498db; color: white; padding: 12px; text-align: left; }
+        td { padding: 10px 12px; border-bottom: 1px solid #ddd; }
+        tr:hover { background: #f0f8ff; }
+        .correct { color: #27ae60; font-weight: bold; }
+        .incorrect { color: #e74c3c; font-weight: bold; }
+        .keyword-matched { color: #27ae60; }
+        .keyword-missing { color: #e74c3c; }
+        .score-bar { background: #ecf0f1; border-radius: 10px; height: 20px; overflow: hidden; }
+        .score-fill { background: #3498db; height: 100%; border-radius: 10px; transition: width 0.3s; }
+        .footer { text-align: center; color: #999; margin-top: 30px; font-size: 12px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Auto Answer Script Correction Report</h1>
+
+    <div class="info-grid">
+        <div class="info-item"><span class="info-label">Student Name:</span> Amrose Khan</div>
+        <div class="info-item"><span class="info-label">Roll Number:</span> CS001</div>
+        <div class="info-item"><span class="info-label">Subject:</span> Computer Science</div>
+        <div class="info-item"><span class="info-label">Date:</span> 2026-03-16 15:04:59</div>
+    </div>
+
+    <div class="summary-box">
+        <div class="grade">Grade: A</div>
+        <div class="percentage">42.1 / 50 (84.2%)</div>
+        <p>MCQ: 10/10 | Subjective: 32.1/40</p>
+    </div>
+
+    <h2>MCQ Questions</h2>
+    <table>
+        <tr><th>#</th><th>Question</th><th>Your Answer</th><th>Correct Answer</th><th>Result</th><th>Marks</th></tr>
+        <tr>
+            <td>1</td>
+            <td>What does CPU stand for?</td>
+            <td>B</td>
+            <td>B</td>
+            <td class="correct">Correct</td>
+            <td>2/2</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Which data structure uses FIFO (First In First Out)?</td>
+            <td>B</td>
+            <td>B</td>
+            <td class="correct">Correct</td>
+            <td>2/2</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>What is the time complexity of binary search?</td>
+            <td>C</td>
+            <td>C</td>
+            <td class="correct">Correct</td>
+            <td>2/2</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Which language is primarily used for web page styling?</td>
+            <td>C</td>
+            <td>C</td>
+            <td class="correct">Correct</td>
+            <td>2/2</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>RAM is a type of?</td>
+            <td>B</td>
+            <td>B</td>
+            <td class="correct">Correct</td>
+            <td>2/2</td>
+        </tr>
+    </table>
+
+    <h2>Subjective Questions</h2>
+
+    <div style="background:#fafafa; padding:15px; border-radius:8px; margin:10px 0; border-left:4px solid #3498db;">
+        <strong>Q6. Explain what an operating system is and list its main functions.</strong> [10 marks]
+        <p><strong>Your Answer:</strong> An operating system is system software that manages hardware and software resources in a computer. It provides process management, memory management, and a user interface. The OS handles file system operations and provides security features for the system.</p>
+        <div class="score-bar"><div class="score-fill" style="width:79.0%"></div></div>
+        <p><strong>Score:</strong> 7.9/10 |
+           Similarity: 65.6% |
+           Keyword Match: 100.0%</p>
+        <p><strong>Keywords Found:</strong> <span class="keyword-matched">system software</span>, <span class="keyword-matched">hardware</span>, <span class="keyword-matched">resources</span>, <span class="keyword-matched">process management</span>, <span class="keyword-matched">memory management</span>, <span class="keyword-matched">file system</span>, <span class="keyword-matched">user interface</span>, <span class="keyword-matched">security</span></p>
+        <p><strong>Keywords Missing:</strong> None</p>
+    </div>
+
+    <div style="background:#fafafa; padding:15px; border-radius:8px; margin:10px 0; border-left:4px solid #3498db;">
+        <strong>Q7. What is Object-Oriented Programming? Explain its key principles.</strong> [10 marks]
+        <p><strong>Your Answer:</strong> OOP is a programming paradigm that uses objects and classes. The four pillars are encapsulation which bundles data and methods together, inheritance where child class inherits from parent class, polymorphism which allows multiple forms, and abstraction which hides complex details showing only necessary features. Objects have attributes and methods.</p>
+        <div class="score-bar"><div class="score-fill" style="width:72.0%"></div></div>
+        <p><strong>Score:</strong> 7.2/10 |
+           Similarity: 53.2% |
+           Keyword Match: 100.0%</p>
+        <p><strong>Keywords Found:</strong> <span class="keyword-matched">objects</span>, <span class="keyword-matched">encapsulation</span>, <span class="keyword-matched">inheritance</span>, <span class="keyword-matched">polymorphism</span>, <span class="keyword-matched">abstraction</span>, <span class="keyword-matched">class</span>, <span class="keyword-matched">methods</span>, <span class="keyword-matched">attributes</span></p>
+        <p><strong>Keywords Missing:</strong> None</p>
+    </div>
+
+    <div style="background:#fafafa; padding:15px; border-radius:8px; margin:10px 0; border-left:4px solid #3498db;">
+        <strong>Q8. Describe the differences between SQL and NoSQL databases.</strong> [10 marks]
+        <p><strong>Your Answer:</strong> SQL databases are relational databases that use structured query language. They have a predefined schema and store data in tables. They support ACID transactions. NoSQL databases are non-relational and can store data in documents or key-value pairs. They offer flexible schemas and better scalability for distributed systems.</p>
+        <div class="score-bar"><div class="score-fill" style="width:81.0%"></div></div>
+        <p><strong>Score:</strong> 8.1/10 |
+           Similarity: 67.6% |
+           Keyword Match: 100.0%</p>
+        <p><strong>Keywords Found:</strong> <span class="keyword-matched">relational</span>, <span class="keyword-matched">structured query language</span>, <span class="keyword-matched">schema</span>, <span class="keyword-matched">tables</span>, <span class="keyword-matched">ACID</span>, <span class="keyword-matched">non-relational</span>, <span class="keyword-matched">documents</span>, <span class="keyword-matched">scalability</span>, <span class="keyword-matched">flexible</span></p>
+        <p><strong>Keywords Missing:</strong> None</p>
+    </div>
+
+    <div style="background:#fafafa; padding:15px; border-radius:8px; margin:10px 0; border-left:4px solid #3498db;">
+        <strong>Q9. What is a linked list? Explain its types with advantages.</strong> [10 marks]
+        <p><strong>Your Answer:</strong> A linked list is a data structure where each element is stored in a node. Each node has data and a pointer to the next node. There are three types: singly linked list where nodes point to next node, doubly linked list where nodes have both next and previous pointers, and circular linked list where last node points to first. It allows dynamic size allocation and efficient insertion and deletion.</p>
+        <div class="score-bar"><div class="score-fill" style="width:89.0%"></div></div>
+        <p><strong>Score:</strong> 8.9/10 |
+           Similarity: 82.4% |
+           Keyword Match: 100.0%</p>
+        <p><strong>Keywords Found:</strong> <span class="keyword-matched">nodes</span>, <span class="keyword-matched">pointer</span>, <span class="keyword-matched">singly linked</span>, <span class="keyword-matched">doubly linked</span>, <span class="keyword-matched">circular</span>, <span class="keyword-matched">dynamic</span>, <span class="keyword-matched">insertion</span>, <span class="keyword-matched">deletion</span></p>
+        <p><strong>Keywords Missing:</strong> None</p>
+    </div>
+
+    <div class="footer">
+        Generated by Auto Answer Script Correction System | 2026-03-16 15:04:59
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report - Abdul (DS002)</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 30px; background: #f5f5f5; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #2980b9; margin-top: 30px; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .info-item { padding: 8px 12px; background: #ecf0f1; border-radius: 5px; }
+        .info-label { font-weight: bold; color: #555; }
+        .summary-box { background: #e8f6ff; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center; }
+        .grade { font-size: 48px; font-weight: bold; color: #27ae60; }
+        .percentage { font-size: 24px; color: #2c3e50; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th { background: #3498db; color: white; padding: 12px; text-align: left; }
+        td { padding: 10px 12px; border-bottom: 1px solid #ddd; }
+        tr:hover { background: #f0f8ff; }
+        .correct { color: #27ae60; font-weight: bold; }
+        .incorrect { color: #e74c3c; font-weight: bold; }
+        .keyword-matched { color: #27ae60; }
+        .keyword-missing { color: #e74c3c; }
+        .score-bar { background: #ecf0f1; border-radius: 10px; height: 20px; overflow: hidden; }
+        .score-fill { background: #3498db; height: 100%; border-radius: 10px; transition: width 0.3s; }
+        .footer { text-align: center; color: #999; margin-top: 30px; font-size: 12px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Auto Answer Script Correction Report</h1>
+
+    <div class="info-grid">
+        <div class="info-item"><span class="info-label">Student Name:</span> Abdul</div>
+        <div class="info-item"><span class="info-label">Roll Number:</span> DS002</div>
+        <div class="info-item"><span class="info-label">Subject:</span> Data Science</div>
+        <div class="info-item"><span class="info-label">Date:</span> 2026-03-16 15:01:35</div>
+    </div>
+
+    <div class="summary-box">
+        <div class="grade">Grade: D</div>
+        <div class="percentage">26.5 / 60 (44.2%)</div>
+        <p>MCQ: 8/10 | Subjective: 18.5/50</p>
+    </div>
+
+    <h2>MCQ Questions</h2>
+    <table>
+        <tr><th>#</th><th>Question</th><th>Your Answer</th><th>Correct Answer</th><th>Result</th><th>Marks</th></tr>
+        <tr>
+            <td>1</td>
+            <td>What does CSV stand for?</td>
+            <td>B</td>
+            <td>B</td>
+            <td class="correct">Correct</td>
+            <td>2/2</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Which Python library is commonly used for data analysis?</td>
+            <td>A</td>
+            <td>B</td>
+            <td class="incorrect">Wrong</td>
+            <td>0/2</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Which technique is used to reduce dimensionality?</td>
+            <td>B</td>
+            <td>B</td>
+            <td class="correct">Correct</td>
+            <td>2/2</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Which algorithm is commonly used for classification?</td>
+            <td>C</td>
+            <td>C</td>
+            <td class="correct">Correct</td>
+            <td>2/2</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Which visualization library is widely used in Python?</td>
+            <td>A</td>
+            <td>A</td>
+            <td class="correct">Correct</td>
+            <td>2/2</td>
+        </tr>
+    </table>
+
+    <h2>Subjective Questions</h2>
+
+    <div style="background:#fafafa; padding:15px; border-radius:8px; margin:10px 0; border-left:4px solid #3498db;">
+        <strong>Q6. Explain what Data Science is.</strong> [10 marks]
+        <p><strong>Your Answer:</strong> Data science analyzes data using statistics and programming to extract insights.</p>
+        <div class="score-bar"><div class="score-fill" style="width:53.0%"></div></div>
+        <p><strong>Score:</strong> 5.3/10 |
+           Similarity: 48.3% |
+           Keyword Match: 60.0%</p>
+        <p><strong>Keywords Found:</strong> <span class="keyword-matched">data</span>, <span class="keyword-matched">statistics</span>, <span class="keyword-matched">insights</span></p>
+        <p><strong>Keywords Missing:</strong> <span class="keyword-missing">machine learning</span>, <span class="keyword-missing">analysis</span></p>
+    </div>
+
+    <div style="background:#fafafa; padding:15px; border-radius:8px; margin:10px 0; border-left:4px solid #3498db;">
+        <strong>Q7. What is Machine Learning?</strong> [10 marks]
+        <p><strong>Your Answer:</strong> Machine learning is part of AI where systems learn from training data.</p>
+        <div class="score-bar"><div class="score-fill" style="width:34.0%"></div></div>
+        <p><strong>Score:</strong> 3.4/10 |
+           Similarity: 30.4% |
+           Keyword Match: 40.0%</p>
+        <p><strong>Keywords Found:</strong> <span class="keyword-matched">AI</span>, <span class="keyword-matched">training</span></p>
+        <p><strong>Keywords Missing:</strong> <span class="keyword-missing">learn from data</span>, <span class="keyword-missing">patterns</span>, <span class="keyword-missing">prediction</span></p>
+    </div>
+
+    <div style="background:#fafafa; padding:15px; border-radius:8px; margin:10px 0; border-left:4px solid #3498db;">
+        <strong>Q8. Explain the difference between supervised and unsupervised learning.</strong> [10 marks]
+        <p><strong>Your Answer:</strong> Supervised learning uses labeled data and unsupervised learning works without labels.</p>
+        <div class="score-bar"><div class="score-fill" style="width:44.00000000000001%"></div></div>
+        <p><strong>Score:</strong> 4.4/10 |
+           Similarity: 56.9% |
+           Keyword Match: 25.0%</p>
+        <p><strong>Keywords Found:</strong> <span class="keyword-matched">labeled data</span></p>
+        <p><strong>Keywords Missing:</strong> <span class="keyword-missing">unlabeled data</span>, <span class="keyword-missing">patterns</span>, <span class="keyword-missing">training</span></p>
+    </div>
+
+    <div style="background:#fafafa; padding:15px; border-radius:8px; margin:10px 0; border-left:4px solid #3498db;">
+        <strong>Q9. What is data preprocessing?</strong> [10 marks]
+        <p><strong>Your Answer:</strong> It includes cleaning missing values and transforming data.</p>
+        <div class="score-bar"><div class="score-fill" style="width:27.999999999999996%"></div></div>
+        <p><strong>Score:</strong> 2.8/10 |
+           Similarity: 30.1% |
+           Keyword Match: 25.0%</p>
+        <p><strong>Keywords Found:</strong> <span class="keyword-matched">cleaning</span></p>
+        <p><strong>Keywords Missing:</strong> <span class="keyword-missing">transformation</span>, <span class="keyword-missing">missing data</span>, <span class="keyword-missing">normalization</span></p>
+    </div>
+
+    <div style="background:#fafafa; padding:15px; border-radius:8px; margin:10px 0; border-left:4px solid #3498db;">
+        <strong>Q10. Explain the purpose of data visualization.</strong> [10 marks]
+        <p><strong>Your Answer:</strong> It helps understand patterns in data visually.</p>
+        <div class="score-bar"><div class="score-fill" style="width:26.0%"></div></div>
+        <p><strong>Score:</strong> 2.6/10 |
+           Similarity: 29.9% |
+           Keyword Match: 20.0%</p>
+        <p><strong>Keywords Found:</strong> <span class="keyword-matched">patterns</span></p>
+        <p><strong>Keywords Missing:</strong> <span class="keyword-missing">charts</span>, <span class="keyword-missing">graphs</span>, <span class="keyword-missing">insights</span>, <span class="keyword-missing">communication</span></p>
+    </div>
+
+    <div class="footer">
+        Generated by Auto Answer Script Correction System | 2026-03-16 15:01:35
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Auto Answer Script Correction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">&#9997;</div>
+            <h1>Auto Answer Script Correction</h1>
+            <p class="subtitle">Automated grading for MCQ &amp; Subjective answers using NLP</p>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="options-grid">
+            <div class="card">
+                <h2><span class="icon">&#9889;</span> Quick Start</h2>
+                <p>Grade the sample answer key and student answers included with the project.</p>
+                <form action="/grade" method="POST">
+                    <input type="hidden" name="use_sample" value="yes">
+                    <button type="submit" class="btn btn-primary btn-block">Grade Sample Data</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2><span class="icon">&#128194;</span> Upload Custom Data</h2>
+                <p>Upload your own answer key and student answers in JSON format.</p>
+                <form action="/grade" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="use_sample" value="no">
+
+                    <div class="form-group">
+                        <label for="answer_key">Question & Answer Key (JSON)</label>
+                        <input type="file" id="answer_key" name="answer_key" accept=".json" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="student_answers">Student Answers (JSON)</label>
+                        <input type="file" id="student_answers" name="student_answers" accept=".json" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-block">Upload &amp; Grade</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card" style="text-align:center;">
+            <h2><span class="icon">&#9997;</span> Create Questions</h2>
+            <p>Build your answer key using a form — add MCQ &amp; subjective questions, then grade &amp; rank students.</p>
+            <a href="/create_questions" class="btn btn-primary">&#10133; Create Questions &amp; Grade</a>
+        </div>
+
+        <div class="card info-card">
+            <h2><span class="icon">&#128214;</span> JSON Format Guide</h2>
+            <div class="code-block">
+                <h3>Answer Key</h3>
+                <pre>{
+  "subject": "Computer Science",
+  "total_marks": 50,
+  "questions": [
+    {
+      "id": 1, "type": "mcq",
+      "question": "What does CPU stand for?",
+      "correct_answer": "B", "marks": 2
+    },
+    {
+      "id": 2, "type": "subjective",
+      "question": "Explain what an OS is.",
+      "model_answer": "An operating system is...",
+      "keywords": ["system software", "hardware"],
+      "marks": 10
+    }
+  ]
+}</pre>
+            </div>
+            <div class="code-block">
+                <h3>Student Answers</h3>
+                <pre>{
+  "students": [
+    {
+      "roll_number": "CS001",
+      "name": "Student Name",
+      "answers": [
+        {"question_id": 1, "answer": "B"},
+        {"question_id": 2, "answer": "An OS manages..."}
+      ]
+    }
+  ]
+}</pre>
+            </div>
+        </div>
+
+        <footer>
+            <p>Auto Answer Script Correction System &mdash; Final Year Project</p>
+        </footer>
+    </div>
+</body>
+</html>

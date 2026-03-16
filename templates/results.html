@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Grading Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">&#128200;</div>
+            <h1>Grading Results</h1>
+            <p class="subtitle">Subject: {{ subject }}</p>
+        </header>
+
+        <!-- Class Statistics -->
+        <div class="card">
+            <h2><span class="icon">&#128202;</span> Class Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value">{{ stats.total_students }}</span>
+                    <span class="stat-label">Students</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ stats.average }}%</span>
+                    <span class="stat-label">Average</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ stats.highest }}%</span>
+                    <span class="stat-label">Highest</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ stats.lowest }}%</span>
+                    <span class="stat-label">Lowest</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Results -->
+        <div class="card">
+            <h2><span class="icon">&#128221;</span> Student Results</h2>
+
+            <!-- Filter & Sort Controls -->
+            <div class="controls-bar">
+                <div class="control-group">
+                    <label for="searchInput">Search</label>
+                    <input type="text" id="searchInput" placeholder="Name or Roll No..." autocomplete="off">
+                </div>
+                <div class="control-group">
+                    <label for="gradeFilter">Grade</label>
+                    <select id="gradeFilter">
+                        <option value="all">All Grades</option>
+                        <option value="A+">A+</option>
+                        <option value="A">A</option>
+                        <option value="B+">B+</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                        <option value="F">F</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="passFilter">Status</label>
+                    <select id="passFilter">
+                        <option value="all">All</option>
+                        <option value="pass">Pass (&#8805;40%)</option>
+                        <option value="fail">Fail (&lt;40%)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="sortBy">Sort By</label>
+                    <select id="sortBy">
+                        <option value="roll-asc">Roll No (A-Z)</option>
+                        <option value="roll-desc">Roll No (Z-A)</option>
+                        <option value="name-asc">Name (A-Z)</option>
+                        <option value="name-desc">Name (Z-A)</option>
+                        <option value="pct-desc">Percentage (High-Low)</option>
+                        <option value="pct-asc">Percentage (Low-High)</option>
+                        <option value="total-desc">Total Score (High-Low)</option>
+                        <option value="total-asc">Total Score (Low-High)</option>
+                        <option value="grade-asc">Grade (Best First)</option>
+                        <option value="grade-desc">Grade (Worst First)</option>
+                    </select>
+                </div>
+            </div>
+            <div id="resultCount" class="result-count"></div>
+
+            <!-- Desktop Table -->
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Roll No</th>
+                            <th>Name</th>
+                            <th>MCQ (Qs)</th>
+                            <th>Subjective (Qs)</th>
+                            <th>Total Score</th>
+                            <th>Percentage</th>
+                            <th>Grade</th>
+                            <th>Report</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTableBody">
+                        {% for report in reports %}
+                        <tr data-roll="{{ report.student.roll_number }}"
+                            data-name="{{ report.student.name }}"
+                            data-pct="{{ report.summary.percentage }}"
+                            data-total="{{ report.summary.total_score }}"
+                            data-grade="{{ report.summary.grade }}"
+                            data-rank="{{ report.rank|default(loop.index) }}">
+                            <td>
+                                <span class="rank-badge rank-{{ report.rank|default(loop.index) }}">
+                                    {% if report.rank|default(loop.index) == 1 %}&#129351;{% elif report.rank|default(loop.index) == 2 %}&#129352;{% elif report.rank|default(loop.index) == 3 %}&#129353;{% else %}#{{ report.rank|default(loop.index) }}{% endif %}
+                                </span>
+                            </td>
+                            <td>{{ report.student.roll_number }}</td>
+                            <td><strong>{{ report.student.name }}</strong></td>
+                            <td>{{ report.summary.mcq_count }} Qs <span style="color:var(--text-secondary);font-size:0.8rem">({{ report.summary.mcq_score }}/{{ report.summary.mcq_max }})</span></td>
+                            <td>{{ report.summary.subjective_count }} Qs <span style="color:var(--text-secondary);font-size:0.8rem">({{ report.summary.subjective_score }}/{{ report.summary.subjective_max }})</span></td>
+                            <td><strong>{{ report.summary.total_score }}/{{ report.summary.total_max }}</strong></td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: {{ report.summary.percentage }}%"></div>
+                                </div>
+                                {{ report.summary.percentage }}%
+                            </td>
+                            <td>
+                                <span class="grade grade-{{ report.summary.grade|replace('+', 'plus') }}">
+                                    {{ report.summary.grade }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="/report/{{ report.student.roll_number }}" class="btn btn-small" target="_blank">View</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Mobile Card View -->
+                <div class="mobile-card" id="mobileCards">
+                    {% for report in reports %}
+                    <div class="mobile-card-item"
+                         data-roll="{{ report.student.roll_number }}"
+                         data-name="{{ report.student.name }}"
+                         data-pct="{{ report.summary.percentage }}"
+                         data-total="{{ report.summary.total_score }}"
+                         data-grade="{{ report.summary.grade }}">
+                        <div class="mobile-card-header">
+                            <div>
+                                <span class="rank-badge rank-{{ report.rank|default(loop.index) }}">
+                                    {% if report.rank|default(loop.index) == 1 %}&#129351;{% elif report.rank|default(loop.index) == 2 %}&#129352;{% elif report.rank|default(loop.index) == 3 %}&#129353;{% else %}#{{ report.rank|default(loop.index) }}{% endif %}
+                                </span>
+                                <div class="mobile-card-name">{{ report.student.name }}</div>
+                                <div class="mobile-card-roll">{{ report.student.roll_number }}</div>
+                            </div>
+                            <span class="grade grade-{{ report.summary.grade|replace('+', 'plus') }}">
+                                {{ report.summary.grade }}
+                            </span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ report.summary.percentage }}%"></div>
+                        </div>
+                        <div class="mobile-card-scores">
+                            <div class="mobile-card-score">
+                                <span class="mobile-card-score-val">{{ report.summary.mcq_count }}</span>
+                                <span class="mobile-card-score-lbl">MCQ Qs</span>
+                            </div>
+                            <div class="mobile-card-score">
+                                <span class="mobile-card-score-val">{{ report.summary.subjective_count }}</span>
+                                <span class="mobile-card-score-lbl">Subj Qs</span>
+                            </div>
+                            <div class="mobile-card-score">
+                                <span class="mobile-card-score-val">{{ report.summary.percentage }}%</span>
+                                <span class="mobile-card-score-lbl">Total</span>
+                            </div>
+                        </div>
+                        <div class="mobile-card-footer">
+                            <strong>{{ report.summary.total_score }}/{{ report.summary.total_max }}</strong>
+                            <a href="/report/{{ report.student.roll_number }}" class="btn btn-small" target="_blank">View Report</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- No results message -->
+                <div id="noResults" class="no-results" style="display:none">
+                    <div class="no-results-icon">&#128269;</div>
+                    <p><strong>No matching data available</strong></p>
+                    <p class="no-results-hint">Try adjusting your search or filter criteria</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question-wise Analysis -->
+        <div class="card">
+            <h2><span class="icon">&#128270;</span> Question-wise Analysis</h2>
+            {% for report in reports %}
+            <div class="student-detail">
+                <h3>{{ report.student.name }} ({{ report.student.roll_number }})</h3>
+
+                {% if report.mcq_results %}
+                <h4>MCQ Answers ({{ report.mcq_results|length }} Questions)</h4>
+                <table class="detail-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Question</th>
+                            <th>Student Answer</th>
+                            <th>Correct Answer</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for r in report.mcq_results %}
+                        <tr>
+                            <td>Q{{ r.question_id }}</td>
+                            <td>{{ r.question }}</td>
+                            <td><strong>{{ r.student_answer or '—' }}</strong></td>
+                            <td>{{ r.correct_answer }}</td>
+                            <td>
+                                <span class="mcq-result {{ 'correct' if r.is_correct else 'incorrect' }}">
+                                    {{ '✔ Correct' if r.is_correct else '✘ Wrong' }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+
+                {% if report.subjective_results %}
+                <h4>Subjective Answers ({{ report.subjective_results|length }} Questions)</h4>
+                {% for r in report.subjective_results %}
+                <div class="subj-item">
+                    <div class="subj-header">
+                        <span>Q{{ r.question_id }}. {{ r.question }}</span>
+                        <span class="subj-score">{{ r.score }}/{{ r.max_marks }}</span>
+                    </div>
+                    <div class="subj-answer">
+                        <strong>Student Answer:</strong> {{ r.student_answer if r.student_answer else '<em>Not answered</em>' }}
+                    </div>
+                    <div class="score-details">
+                        <span>Similarity: {{ r.similarity_score }}%</span>
+                        <span>Keywords: {{ r.keyword_score }}%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ (r.score / r.max_marks * 100) if r.max_marks > 0 else 0 }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+            {% if not loop.last %}<hr>{% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="actions">
+            <a href="/" class="btn btn-primary">&#8592; Grade Again</a>
+        </div>
+
+        <footer>
+            <p>Auto Answer Script Correction System &mdash; Final Year Project</p>
+        </footer>
+    </div>
+
+    <script>
+    (function() {
+        const searchInput = document.getElementById('searchInput');
+        const gradeFilter = document.getElementById('gradeFilter');
+        const passFilter = document.getElementById('passFilter');
+        const sortBy = document.getElementById('sortBy');
+        const resultCount = document.getElementById('resultCount');
+        const tableBody = document.getElementById('resultsTableBody');
+        const mobileContainer = document.getElementById('mobileCards');
+
+        const GRADE_ORDER = {'A+': 1, 'A': 2, 'B+': 3, 'B': 4, 'C': 5, 'D': 6, 'F': 7};
+
+        function getRows() { return Array.from(tableBody.querySelectorAll('tr')); }
+        function getCards() { return Array.from(mobileContainer.querySelectorAll('.mobile-card-item')); }
+
+        function applyFilterSort() {
+            const search = searchInput.value.trim().toLowerCase();
+            const grade = gradeFilter.value;
+            const pass = passFilter.value;
+            const sort = sortBy.value;
+
+            const rows = getRows();
+            const cards = getCards();
+
+            // Filter
+            let visibleCount = 0;
+            rows.forEach(function(row, i) {
+                const card = cards[i];
+                const name = row.dataset.name.toLowerCase();
+                const roll = row.dataset.roll.toLowerCase();
+                const pct = parseFloat(row.dataset.pct);
+                const g = row.dataset.grade;
+
+                let show = true;
+                if (search && !name.includes(search) && !roll.includes(search)) show = false;
+                if (grade !== 'all' && g !== grade) show = false;
+                if (pass === 'pass' && pct < 40) show = false;
+                if (pass === 'fail' && pct >= 40) show = false;
+
+                row.style.display = show ? '' : 'none';
+                if (card) card.style.display = show ? '' : 'none';
+                if (show) visibleCount++;
+            });
+
+            // Sort
+            const sortedRows = rows.slice().sort(function(a, b) {
+                switch(sort) {
+                    case 'roll-asc': return a.dataset.roll.localeCompare(b.dataset.roll);
+                    case 'roll-desc': return b.dataset.roll.localeCompare(a.dataset.roll);
+                    case 'name-asc': return a.dataset.name.localeCompare(b.dataset.name);
+                    case 'name-desc': return b.dataset.name.localeCompare(a.dataset.name);
+                    case 'pct-desc': return parseFloat(b.dataset.pct) - parseFloat(a.dataset.pct);
+                    case 'pct-asc': return parseFloat(a.dataset.pct) - parseFloat(b.dataset.pct);
+                    case 'total-desc': return parseFloat(b.dataset.total) - parseFloat(a.dataset.total);
+                    case 'total-asc': return parseFloat(a.dataset.total) - parseFloat(b.dataset.total);
+                    case 'grade-asc': return (GRADE_ORDER[a.dataset.grade]||9) - (GRADE_ORDER[b.dataset.grade]||9);
+                    case 'grade-desc': return (GRADE_ORDER[b.dataset.grade]||9) - (GRADE_ORDER[a.dataset.grade]||9);
+                    default: return 0;
+                }
+            });
+
+            // Re-order DOM
+            sortedRows.forEach(function(row) { tableBody.appendChild(row); });
+            // Match mobile card order to table order
+            sortedRows.forEach(function(row) {
+                const roll = row.dataset.roll;
+                const card = mobileContainer.querySelector('[data-roll="' + roll + '"]');
+                if (card) mobileContainer.appendChild(card);
+            });
+
+            resultCount.textContent = 'Showing ' + visibleCount + ' of ' + rows.length + ' students';
+
+            var noResults = document.getElementById('noResults');
+            noResults.style.display = visibleCount === 0 ? '' : 'none';
+        }
+
+        searchInput.addEventListener('input', applyFilterSort);
+        gradeFilter.addEventListener('change', applyFilterSort);
+        passFilter.addEventListener('change', applyFilterSort);
+        sortBy.addEventListener('change', applyFilterSort);
+
+        applyFilterSort();
+    })();
+    </script>
+</body>
+</html>

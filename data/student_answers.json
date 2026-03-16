@@ -1,0 +1,49 @@
+{
+    "students": [
+        {
+            "roll_number": "CS001",
+            "name": "Amrose Khan",
+            "answers": [
+                {"question_id": 1, "answer": "B"},
+                {"question_id": 2, "answer": "B"},
+                {"question_id": 3, "answer": "C"},
+                {"question_id": 4, "answer": "C"},
+                {"question_id": 5, "answer": "B"},
+                {"question_id": 6, "answer": "An operating system is system software that manages hardware and software resources in a computer. It provides process management, memory management, and a user interface. The OS handles file system operations and provides security features for the system."},
+                {"question_id": 7, "answer": "OOP is a programming paradigm that uses objects and classes. The four pillars are encapsulation which bundles data and methods together, inheritance where child class inherits from parent class, polymorphism which allows multiple forms, and abstraction which hides complex details showing only necessary features. Objects have attributes and methods."},
+                {"question_id": 8, "answer": "SQL databases are relational databases that use structured query language. They have a predefined schema and store data in tables. They support ACID transactions. NoSQL databases are non-relational and can store data in documents or key-value pairs. They offer flexible schemas and better scalability for distributed systems."},
+                {"question_id": 9, "answer": "A linked list is a data structure where each element is stored in a node. Each node has data and a pointer to the next node. There are three types: singly linked list where nodes point to next node, doubly linked list where nodes have both next and previous pointers, and circular linked list where last node points to first. It allows dynamic size allocation and efficient insertion and deletion."}
+            ]
+        },
+        {
+            "roll_number": "CS002",
+            "name": "Abdul Hameed",
+            "answers": [
+                {"question_id": 1, "answer": "B"},
+                {"question_id": 2, "answer": "A"},
+                {"question_id": 3, "answer": "C"},
+                {"question_id": 4, "answer": "A"},
+                {"question_id": 5, "answer": "B"},
+                {"question_id": 6, "answer": "Operating system is software that runs on computers. It helps manage the computer hardware and provides process management. It also gives a user interface to interact with the system."},
+                {"question_id": 7, "answer": "Object Oriented Programming uses objects and classes to write code. It has encapsulation and inheritance as main concepts. Polymorphism is also used in OOP. Methods are written inside classes."},
+                {"question_id": 8, "answer": "SQL is a database language used for relational databases. It stores data in tables with rows and columns. NoSQL is different and uses documents. MongoDB is an example of NoSQL. SQL databases follow ACID properties."},
+                {"question_id": 9, "answer": "Linked list stores data in nodes connected together. There are singly and doubly linked lists. It is useful for dynamic memory allocation. Insertion of elements is easy in linked lists."}
+            ]
+        },
+        {
+            "roll_number": "CS003",
+            "name": "Pravin",
+            "answers": [
+                {"question_id": 1, "answer": "A"},
+                {"question_id": 2, "answer": "B"},
+                {"question_id": 3, "answer": "A"},
+                {"question_id": 4, "answer": "C"},
+                {"question_id": 5, "answer": "A"},
+                {"question_id": 6, "answer": "An OS manages the computer. It is used to run programs."},
+                {"question_id": 7, "answer": "OOP stands for object oriented programming. It uses classes and objects. Inheritance means one class can use another class properties."},
+                {"question_id": 8, "answer": "SQL and NoSQL are types of databases. SQL is structured and NoSQL is not structured. They are used to store data."},
+                {"question_id": 9, "answer": "A linked list is a data structure. It has nodes that are connected. Singly linked list goes in one direction."}
+            ]
+        }
+    ]
+}

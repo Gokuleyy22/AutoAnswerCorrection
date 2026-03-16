@@ -1,0 +1,78 @@
+{
+    "subject": "Computer Science",
+    "total_marks": 50,
+    "questions": [
+        {
+            "id": 1,
+            "type": "mcq",
+            "question": "What does CPU stand for?",
+            "options": ["A. Central Process Unit", "B. Central Processing Unit", "C. Computer Personal Unit", "D. Central Processor Utility"],
+            "correct_answer": "B",
+            "marks": 2
+        },
+        {
+            "id": 2,
+            "type": "mcq",
+            "question": "Which data structure uses FIFO (First In First Out)?",
+            "options": ["A. Stack", "B. Queue", "C. Tree", "D. Graph"],
+            "correct_answer": "B",
+            "marks": 2
+        },
+        {
+            "id": 3,
+            "type": "mcq",
+            "question": "What is the time complexity of binary search?",
+            "options": ["A. O(n)", "B. O(n^2)", "C. O(log n)", "D. O(1)"],
+            "correct_answer": "C",
+            "marks": 2
+        },
+        {
+            "id": 4,
+            "type": "mcq",
+            "question": "Which language is primarily used for web page styling?",
+            "options": ["A. HTML", "B. JavaScript", "C. CSS", "D. Python"],
+            "correct_answer": "C",
+            "marks": 2
+        },
+        {
+            "id": 5,
+            "type": "mcq",
+            "question": "RAM is a type of?",
+            "options": ["A. Non-volatile memory", "B. Volatile memory", "C. Secondary storage", "D. Cache"],
+            "correct_answer": "B",
+            "marks": 2
+        },
+        {
+            "id": 6,
+            "type": "subjective",
+            "question": "Explain what an operating system is and list its main functions.",
+            "model_answer": "An operating system is system software that manages computer hardware and software resources and provides common services for computer programs. Its main functions include process management, memory management, file system management, device management, and providing a user interface. The OS acts as an intermediary between users and the computer hardware, handling task scheduling, resource allocation, and security management.",
+            "keywords": ["system software", "hardware", "resources", "process management", "memory management", "file system", "user interface", "security"],
+            "marks": 10
+        },
+        {
+            "id": 7,
+            "type": "subjective",
+            "question": "What is Object-Oriented Programming? Explain its key principles.",
+            "model_answer": "Object-Oriented Programming (OOP) is a programming paradigm based on the concept of objects, which contain data in the form of fields (attributes) and code in the form of procedures (methods). The four key principles of OOP are: 1) Encapsulation - bundling data and methods together and restricting direct access, 2) Inheritance - allowing a class to inherit properties from a parent class, 3) Polymorphism - the ability of objects to take multiple forms, and 4) Abstraction - hiding complex implementation details and showing only necessary features.",
+            "keywords": ["objects", "encapsulation", "inheritance", "polymorphism", "abstraction", "class", "methods", "attributes"],
+            "marks": 10
+        },
+        {
+            "id": 8,
+            "type": "subjective",
+            "question": "Describe the differences between SQL and NoSQL databases.",
+            "model_answer": "SQL databases are relational databases that use structured query language for data manipulation. They have a predefined schema, store data in tables with rows and columns, and support ACID transactions for data consistency. Examples include MySQL and PostgreSQL. NoSQL databases are non-relational and can store data in various formats like documents, key-value pairs, graphs, or wide-column stores. They offer flexible schemas, horizontal scalability, and are better suited for large-scale distributed data. Examples include MongoDB and Cassandra.",
+            "keywords": ["relational", "structured query language", "schema", "tables", "ACID", "non-relational", "documents", "scalability", "flexible"],
+            "marks": 10
+        },
+        {
+            "id": 9,
+            "type": "subjective",
+            "question": "What is a linked list? Explain its types with advantages.",
+            "model_answer": "A linked list is a linear data structure where elements are stored in nodes. Each node contains data and a reference (pointer) to the next node in the sequence. Types include: 1) Singly Linked List - each node points to the next node, 2) Doubly Linked List - each node has pointers to both next and previous nodes, 3) Circular Linked List - the last node points back to the first node. Advantages include dynamic size allocation, efficient insertion and deletion operations, and no memory wastage as memory is allocated as needed.",
+            "keywords": ["nodes", "pointer", "singly linked", "doubly linked", "circular", "dynamic", "insertion", "deletion"],
+            "marks": 10
+        }
+    ]
+}

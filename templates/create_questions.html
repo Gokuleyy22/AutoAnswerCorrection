@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Create Questions - Auto Answer Script Correction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">&#9997;</div>
+            <h1>Create Questions</h1>
+            <p class="subtitle">Build your answer key, then upload student answers to grade &amp; rank</p>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form id="questionForm" action="/grade_created" method="POST" enctype="multipart/form-data" onsubmit="return prepareSubmit()">
+            <!-- Hidden fields for JSON data -->
+            <input type="hidden" id="answer_key_json" name="answer_key_json" value="">
+            <input type="hidden" id="student_answers_json" name="student_answers_json" value="">
+            <input type="hidden" id="student_input_mode" name="student_input_mode" value="">
+
+            <!-- Subject Info -->
+            <div class="card">
+                <h2><span class="icon">&#128218;</span> Subject Details</h2>
+                <div class="form-group">
+                    <label for="subject">Subject Name</label>
+                    <input type="text" id="subject" name="subject" placeholder="e.g. Computer Science" required class="text-input">
+                </div>
+            </div>
+
+            <!-- Questions Container -->
+            <div id="questionsContainer"></div>
+
+            <!-- Add Question Buttons -->
+            <div class="card add-question-card">
+                <h2><span class="icon">&#10133;</span> Add Question</h2>
+                <div class="add-btn-group">
+                    <button type="button" class="btn btn-primary" onclick="addMCQ()">&#9745; Add MCQ</button>
+                    <button type="button" class="btn btn-success" onclick="addSubjective()">&#128221; Add Subjective</button>
+                </div>
+            </div>
+
+            <!-- Student Answers -->
+            <div class="card">
+                <h2><span class="icon">&#128100;</span> Student Answers</h2>
+                <p>Choose how to provide student answers:</p>
+                <div class="add-btn-group" style="margin-bottom:16px">
+                    <button type="button" class="btn btn-primary" id="modeFormBtn" onclick="setStudentMode('form')">&#9997; Add via Form</button>
+                    <button type="button" class="btn btn-success" id="modeFileBtn" onclick="setStudentMode('file')">&#128194; Upload JSON File</button>
+                </div>
+
+                <!-- File upload mode -->
+                <div id="studentFileMode" style="display:none">
+                    <div class="form-group">
+                        <label for="student_answers">Student Answers (JSON)</label>
+                        <input type="file" id="student_answers" name="student_answers" accept=".json">
+                    </div>
+                </div>
+
+                <!-- Form mode -->
+                <div id="studentFormMode" style="display:none">
+                    <div id="studentsContainer"></div>
+                    <div style="text-align:center;margin-top:12px">
+                        <button type="button" class="btn btn-primary" onclick="addStudent()">&#10133; Add Student</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Answers JSON Preview -->
+            <div class="card" id="studentJsonCard" style="display:none">
+                <h2><span class="icon">&#128196;</span> Generated Student Answers JSON</h2>
+                <div class="code-block">
+                    <pre id="studentJsonPreview">Add students above to see the generated JSON...</pre>
+                </div>
+                <button type="button" class="btn btn-small" onclick="copyStudentJSON()" style="margin-top:12px">&#128203; Copy JSON</button>
+            </div>
+
+            <!-- Generated JSON Preview -->
+            <div class="card">
+                <h2><span class="icon">&#128196;</span> Generated Answer Key JSON</h2>
+                <div class="code-block">
+                    <pre id="jsonPreview">Add questions above to see the generated JSON...</pre>
+                </div>
+                <button type="button" class="btn btn-small" onclick="copyJSON()" style="margin-top:12px">&#128203; Copy JSON</button>
+            </div>
+
+            <!-- Submit -->
+            <div class="actions">
+                <button type="submit" class="btn btn-primary" id="submitBtn" disabled>&#128640; Grade &amp; Rank Students</button>
+            </div>
+        </form>
+
+        <div class="actions">
+            <a href="/" class="btn btn-small">&#8592; Back to Home</a>
+        </div>
+
+        <footer>
+            <p>Auto Answer Script Correction System &mdash; Final Year Project</p>
+        </footer>
+    </div>
+
+    <script>
+    (function() {
+        let questionCount = 0;
+        let studentCount = 0;
+        let studentMode = null; // 'form' or 'file'
+
+        window.setStudentMode = function(mode) {
+            studentMode = mode;
+            document.getElementById('studentFileMode').style.display = mode === 'file' ? '' : 'none';
+            document.getElementById('studentFormMode').style.display = mode === 'form' ? '' : 'none';
+            document.getElementById('studentJsonCard').style.display = mode === 'form' ? '' : 'none';
+            document.getElementById('modeFormBtn').classList.toggle('btn-outline', mode !== 'form');
+            document.getElementById('modeFileBtn').classList.toggle('btn-outline', mode !== 'file');
+            document.getElementById('student_input_mode').value = mode;
+            // If file mode, enable file input; if form mode, disable it so it's not submitted
+            const fileInput = document.getElementById('student_answers');
+            if (mode === 'file') {
+                fileInput.required = true;
+                fileInput.disabled = false;
+            } else {
+                fileInput.required = false;
+                fileInput.disabled = true;
+                fileInput.value = '';
+            }
+            updateSubmitBtn();
+        };
+
+        window.addStudent = function() {
+            studentCount++;
+            const sid = studentCount;
+            const questionCards = document.querySelectorAll('#questionsContainer .question-card');
+            let answersHTML = '';
+            if (questionCards.length === 0) {
+                answersHTML = '<p style="color:var(--text-secondary);font-size:0.85rem;">Add questions above first, then add students.</p>';
+            } else {
+                questionCards.forEach(function(card, index) {
+                    const qNum = index + 1;
+                    const type = card.dataset.type;
+                    const qid = card.dataset.qid;
+                    const qText = getVal('q_' + qid + '_question') || ('Question ' + qNum);
+                    if (type === 'mcq') {
+                        answersHTML += `
+                        <div class="form-group student-answer-group" data-qnum="${qNum}">
+                            <label>Q${qNum} (MCQ): ${escapeHtml(qText)}</label>
+                            <select name="s_${sid}_a_${qNum}" class="text-input" onchange="updateStudentPreview()">
+                                <option value="">-- Select --</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                            </select>
+                        </div>`;
+                    } else {
+                        answersHTML += `
+                        <div class="form-group student-answer-group" data-qnum="${qNum}">
+                            <label>Q${qNum} (Subjective): ${escapeHtml(qText)}</label>
+                            <textarea name="s_${sid}_a_${qNum}" class="text-input textarea" rows="3" placeholder="Enter answer..." oninput="updateStudentPreview()"></textarea>
+                        </div>`;
+                    }
+                });
+            }
+
+            const html = `
+            <div class="card student-card" id="s_${sid}" data-sid="${sid}">
+                <div class="question-header">
+                    <h2><span class="icon">&#128100;</span> Student ${sid}</h2>
+                    <button type="button" class="btn btn-danger btn-small" onclick="removeStudent(${sid})">&#128465; Remove</button>
+                </div>
+                <div class="form-group">
+                    <label>Roll Number</label>
+                    <input type="text" name="s_${sid}_roll" placeholder="e.g. CS001" required class="text-input" oninput="updateStudentPreview()">
+                </div>
+                <div class="form-group">
+                    <label>Student Name</label>
+                    <input type="text" name="s_${sid}_name" placeholder="e.g. Arun Kumar" required class="text-input" oninput="updateStudentPreview()">
+                </div>
+                <h3 style="margin:14px 0 8px;color:var(--text-secondary);font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px;">Answers</h3>
+                <div class="student-answers-list">${answersHTML}</div>
+            </div>`;
+            document.getElementById('studentsContainer').insertAdjacentHTML('beforeend', html);
+            updateStudentPreview();
+            updateSubmitBtn();
+        };
+
+        window.removeStudent = function(sid) {
+            const el = document.getElementById('s_' + sid);
+            if (el) el.remove();
+            renumberStudents();
+            updateStudentPreview();
+            updateSubmitBtn();
+        };
+
+        function renumberStudents() {
+            const cards = document.querySelectorAll('#studentsContainer .student-card');
+            cards.forEach(function(card, index) {
+                const num = index + 1;
+                card.querySelector('h2').innerHTML = '<span class="icon">&#128100;</span> Student ' + num;
+            });
+        }
+
+        function escapeHtml(text) {
+            const d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
+        }
+
+        function buildStudentJSON() {
+            const studentCards = document.querySelectorAll('#studentsContainer .student-card');
+            const questionCards = document.querySelectorAll('#questionsContainer .question-card');
+            const students = [];
+
+            studentCards.forEach(function(sCard) {
+                const sid = sCard.dataset.sid;
+                const roll = getVal('s_' + sid + '_roll');
+                const name = getVal('s_' + sid + '_name');
+                const answers = [];
+
+                questionCards.forEach(function(qCard, qIndex) {
+                    const qNum = qIndex + 1;
+                    const ans = getVal('s_' + sid + '_a_' + qNum);
+                    answers.push({ question_id: qNum, answer: ans });
+                });
+
+                students.push({ roll_number: roll, name: name, answers: answers });
+            });
+
+            return { students: students };
+        }
+
+        window.updateStudentPreview = function() {
+            const data = buildStudentJSON();
+            document.getElementById('studentJsonPreview').textContent = JSON.stringify(data, null, 2);
+            document.getElementById('student_answers_json').value = JSON.stringify(data);
+        };
+
+        window.copyStudentJSON = function() {
+            const text = document.getElementById('studentJsonPreview').textContent;
+            navigator.clipboard.writeText(text);
+        };
+
+        // When questions change, refresh the answer fields inside all student cards
+        function refreshStudentAnswerFields() {
+            const studentCards = document.querySelectorAll('#studentsContainer .student-card');
+            const questionCards = document.querySelectorAll('#questionsContainer .question-card');
+
+            studentCards.forEach(function(sCard) {
+                const sid = sCard.dataset.sid;
+                const list = sCard.querySelector('.student-answers-list');
+                // Save existing answers
+                const saved = {};
+                list.querySelectorAll('.student-answer-group').forEach(function(g) {
+                    const qnum = g.dataset.qnum;
+                    const input = g.querySelector('select, textarea');
+                    if (input) saved[qnum] = input.value;
+                });
+
+                let html = '';
+                if (questionCards.length === 0) {
+                    html = '<p style="color:var(--text-secondary);font-size:0.85rem;">Add questions above first, then add students.</p>';
+                } else {
+                    questionCards.forEach(function(card, index) {
+                        const qNum = index + 1;
+                        const type = card.dataset.type;
+                        const qid = card.dataset.qid;
+                        const qText = getVal('q_' + qid + '_question') || ('Question ' + qNum);
+                        const prev = saved[qNum] || '';
+                        if (type === 'mcq') {
+                            html += `
+                            <div class="form-group student-answer-group" data-qnum="${qNum}">
+                                <label>Q${qNum} (MCQ): ${escapeHtml(qText)}</label>
+                                <select name="s_${sid}_a_${qNum}" class="text-input" onchange="updateStudentPreview()">
+                                    <option value="">-- Select --</option>
+                                    <option value="A" ${prev==='A'?'selected':''}>A</option>
+                                    <option value="B" ${prev==='B'?'selected':''}>B</option>
+                                    <option value="C" ${prev==='C'?'selected':''}>C</option>
+                                    <option value="D" ${prev==='D'?'selected':''}>D</option>
+                                </select>
+                            </div>`;
+                        } else {
+                            html += `
+                            <div class="form-group student-answer-group" data-qnum="${qNum}">
+                                <label>Q${qNum} (Subjective): ${escapeHtml(qText)}</label>
+                                <textarea name="s_${sid}_a_${qNum}" class="text-input textarea" rows="3" placeholder="Enter answer..." oninput="updateStudentPreview()">${escapeHtml(prev)}</textarea>
+                            </div>`;
+                        }
+                    });
+                }
+                list.innerHTML = html;
+            });
+            updateStudentPreview();
+        }
+
+        window.addMCQ = function() {
+            questionCount++;
+            const id = questionCount;
+            const html = `
+            <div class="card question-card" id="q_${id}" data-type="mcq" data-qid="${id}">
+                <div class="question-header">
+                    <h2><span class="icon">&#9745;</span> Q${id} — MCQ</h2>
+                    <button type="button" class="btn btn-danger btn-small" onclick="removeQuestion(${id})">&#128465; Remove</button>
+                </div>
+                <div class="form-group">
+                    <label>Question Text</label>
+                    <input type="text" name="q_${id}_question" placeholder="Enter question..." required class="text-input" oninput="updatePreview()">
+                </div>
+                <div class="form-group">
+                    <label>Option A</label>
+                    <input type="text" name="q_${id}_optA" placeholder="Option A" required class="text-input" oninput="updatePreview()">
+                </div>
+                <div class="form-group">
+                    <label>Option B</label>
+                    <input type="text" name="q_${id}_optB" placeholder="Option B" required class="text-input" oninput="updatePreview()">
+                </div>
+                <div class="form-group">
+                    <label>Option C</label>
+                    <input type="text" name="q_${id}_optC" placeholder="Option C" required class="text-input" oninput="updatePreview()">
+                </div>
+                <div class="form-group">
+                    <label>Option D</label>
+                    <input type="text" name="q_${id}_optD" placeholder="Option D" required class="text-input" oninput="updatePreview()">
+                </div>
+                <div class="form-group">
+                    <label>Correct Answer</label>
+                    <select name="q_${id}_correct" class="text-input" onchange="updatePreview()">
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Marks</label>
+                    <input type="number" name="q_${id}_marks" value="2" min="1" required class="text-input" oninput="updatePreview()">
+                </div>
+            </div>`;
+            document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', html);
+            updatePreview();
+            updateSubmitBtn();
+            refreshStudentAnswerFields();
+        };
+
+        window.addSubjective = function() {
+            questionCount++;
+            const id = questionCount;
+            const html = `
+            <div class="card question-card" id="q_${id}" data-type="subjective" data-qid="${id}">
+                <div class="question-header">
+                    <h2><span class="icon">&#128221;</span> Q${id} — Subjective</h2>
+                    <button type="button" class="btn btn-danger btn-small" onclick="removeQuestion(${id})">&#128465; Remove</button>
+                </div>
+                <div class="form-group">
+                    <label>Question Text</label>
+                    <input type="text" name="q_${id}_question" placeholder="Enter question..." required class="text-input" oninput="updatePreview()">
+                </div>
+                <div class="form-group">
+                    <label>Model Answer</label>
+                    <textarea name="q_${id}_model" placeholder="Enter the ideal/model answer..." required class="text-input textarea" rows="4" oninput="updatePreview()"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Keywords (comma-separated)</label>
+                    <input type="text" name="q_${id}_keywords" placeholder="e.g. encapsulation, inheritance, polymorphism" class="text-input" oninput="updatePreview()">
+                </div>
+                <div class="form-group">
+                    <label>Marks</label>
+                    <input type="number" name="q_${id}_marks" value="10" min="1" required class="text-input" oninput="updatePreview()">
+                </div>
+            </div>`;
+            document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', html);
+            updatePreview();
+            updateSubmitBtn();
+            refreshStudentAnswerFields();
+        };
+
+        window.removeQuestion = function(id) {
+            const el = document.getElementById('q_' + id);
+            if (el) el.remove();
+            renumberQuestions();
+            updatePreview();
+            updateSubmitBtn();
+            refreshStudentAnswerFields();
+        };
+
+        function renumberQuestions() {
+            const cards = document.querySelectorAll('#questionsContainer .question-card');
+            cards.forEach(function(card, index) {
+                const num = index + 1;
+                const type = card.dataset.type;
+                const label = type === 'mcq' ? 'MCQ' : 'Subjective';
+                const icon = type === 'mcq' ? '&#9745;' : '&#128221;';
+                card.querySelector('h2').innerHTML = '<span class="icon">' + icon + '</span> Q' + num + ' — ' + label;
+            });
+        }
+
+        function buildJSON() {
+            const subject = document.getElementById('subject').value || 'Untitled';
+            const cards = document.querySelectorAll('#questionsContainer .question-card');
+            const questions = [];
+            let totalMarks = 0;
+
+            cards.forEach(function(card, index) {
+                const id = index + 1;
+                const type = card.dataset.type;
+                const qid = card.dataset.qid;
+
+                const questionText = getVal('q_' + qid + '_question');
+                const marks = parseInt(getVal('q_' + qid + '_marks')) || 1;
+                totalMarks += marks;
+
+                if (type === 'mcq') {
+                    questions.push({
+                        id: id,
+                        type: 'mcq',
+                        question: questionText,
+                        options: [
+                            'A. ' + getVal('q_' + qid + '_optA'),
+                            'B. ' + getVal('q_' + qid + '_optB'),
+                            'C. ' + getVal('q_' + qid + '_optC'),
+                            'D. ' + getVal('q_' + qid + '_optD')
+                        ],
+                        correct_answer: getVal('q_' + qid + '_correct'),
+                        marks: marks
+                    });
+                } else {
+                    const kw = getVal('q_' + qid + '_keywords');
+                    questions.push({
+                        id: id,
+                        type: 'subjective',
+                        question: questionText,
+                        model_answer: getVal('q_' + qid + '_model'),
+                        keywords: kw ? kw.split(',').map(function(k) { return k.trim(); }).filter(Boolean) : [],
+                        marks: marks
+                    });
+                }
+            });
+
+            return {
+                subject: subject,
+                total_marks: totalMarks,
+                questions: questions
+            };
+        }
+
+        function getVal(name) {
+            const el = document.querySelector('[name="' + name + '"]');
+            return el ? el.value : '';
+        }
+
+        window.updatePreview = function() {
+            const data = buildJSON();
+            document.getElementById('jsonPreview').textContent = JSON.stringify(data, null, 2);
+            document.getElementById('answer_key_json').value = JSON.stringify(data);
+        };
+
+        window.copyJSON = function() {
+            const text = document.getElementById('jsonPreview').textContent;
+            navigator.clipboard.writeText(text);
+        };
+
+        function updateSubmitBtn() {
+            const qCards = document.querySelectorAll('#questionsContainer .question-card');
+            const sCards = document.querySelectorAll('#studentsContainer .student-card');
+            // Need at least 1 question, and either file mode with a file or form mode with at least 1 student
+            let studentOk = false;
+            if (studentMode === 'file') {
+                const fileInput = document.getElementById('student_answers');
+                studentOk = fileInput && fileInput.files && fileInput.files.length > 0;
+            } else if (studentMode === 'form') {
+                studentOk = sCards.length > 0;
+            }
+            document.getElementById('submitBtn').disabled = qCards.length === 0 || !studentOk;
+        }
+
+        // Re-check submit when file input changes
+        document.addEventListener('change', function(e) {
+            if (e.target && e.target.id === 'student_answers') updateSubmitBtn();
+        });
+
+        // Ensure all JSON fields are fresh before form submission
+        window.prepareSubmit = function() {
+            updatePreview();
+            if (studentMode === 'form') {
+                updateStudentPreview();
+                var data = buildStudentJSON();
+                if (!data.students || data.students.length === 0) {
+                    alert('Please add at least one student.');
+                    return false;
+                }
+            }
+            var ak = buildJSON();
+            if (!ak.questions || ak.questions.length === 0) {
+                alert('Please add at least one question.');
+                return false;
+            }
+            if (!studentMode) {
+                alert('Please choose how to provide student answers (Add via Form or Upload JSON File).');
+                return false;
+            }
+            return true;
+        };
+    })();
+    </script>
+</body>
+</html>
