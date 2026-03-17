@@ -7,7 +7,7 @@ and viewing grading results.
 import json
 import os
 
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash # type: ignore
 
 from corrector.mcq_corrector import MCQCorrector
 from corrector.subjective_corrector import SubjectiveCorrector
